@@ -1,21 +1,28 @@
 <?php
 namespace App\Planets;
 
+use App\ElasticSearch\ElasticClientInterface;
 use App\ElasticSearch\ClientOptions;
-use App\ElasticSearch\SearchClientInterface;
+use App\ElasticSearch\Query\QueryBuilder;
+
 use App\Schema\Planets;
 
 class PlanetService
 {
     /**
-     * @var SearchClientInterface
+     * @var ElasticClientInterface
      */
     private $client;
 
+    /**
+     * @var QueryBuilder
+     */
+    private $queryBuilder;
+
     public function __construct(
-        SearchClientInterface $client
+        ElasticClientInterface $client
     ){
-        $this->client = $client;    
+        $this->client = $client;
     }
 
     public function getElasticHost()
@@ -33,5 +40,24 @@ class PlanetService
         ->setBody($body);
 
         $this->client->index($options);
+    }
+
+    public function getPlanets()
+    {
+        $queryBuilder = (new QueryBuilder)
+        ->addQuery(new \App\ElasticSearch\Query\MatchAll);
+
+        $options = (new ClientOptions)
+        ->setHost($this->getElasticHost())
+        ->setIndex(Planets::INDEX)
+        ->setType(Planets::TYPE)
+        ->setQuery($queryBuilder);
+
+        $result = [];
+        $this->client->scroll($options, function($contents) use(&$result){
+            $result = array_merge($result, $contents['hits']['hits']);
+        });
+
+        return $result;
     }
 }

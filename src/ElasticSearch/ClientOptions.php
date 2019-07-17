@@ -1,6 +1,8 @@
 <?php
 namespace App\ElasticSearch;
 
+use App\ElasticSearch\Query\QueryBuilder;
+
 class ClientOptions
 {
     /**
@@ -27,6 +29,11 @@ class ClientOptions
      * @var array
      */
     private $body = [];
+
+    /**
+     * @var array
+     */
+    private $query;
 
     /**
      * @param string $value
@@ -130,5 +137,23 @@ class ClientOptions
     {
         $this->body[$key] = $value;
         return $this;
+    }
+
+    /**
+     * @param QueryBuilder $builder
+     * @return ClientOptions
+     */
+    public function setQuery(QueryBuilder $builder)
+    {
+        $this->query = $builder->getQuery();
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getQuery()
+    {
+        return $this->query;
     }
 }

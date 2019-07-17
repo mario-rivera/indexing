@@ -2,6 +2,6 @@
 use Psr\Container\ContainerInterface;
 
 return [
-    \App\ElasticSearch\SearchClientInterface::class => 
-        \DI\autowire(\App\ElasticSearch\SearchClient::class),
+    \App\ElasticSearch\ElasticClientInterface::class => 
+        \DI\autowire(\App\ElasticSearch\ElasticClient::class),
 ];

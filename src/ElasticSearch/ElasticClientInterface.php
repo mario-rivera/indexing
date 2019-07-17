@@ -1,7 +1,7 @@
 <?php
 namespace App\ElasticSearch;
 
-interface SearchClientInterface
+interface ElasticClientInterface
 {
     /**
      * @param ClientOptions $options
@@ -22,4 +22,16 @@ interface SearchClientInterface
      * @param ClientOptions $options
      */
     public function update(ClientOptions $options);
+
+    /**
+     * @param ClientOptions $options
+     */
+    public function search(ClientOptions $options);
+
+    /**
+     * @param ClientOptions $options
+     * @param callable $callback
+     * @param string $scrollId
+     */
+    public function scroll(ClientOptions $options, callable $callback, string $scrollId = null);
 }
