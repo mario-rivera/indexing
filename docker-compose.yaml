@@ -1,0 +1,31 @@
+version: '3.7'
+
+services:
+  php:
+    image: mariort/php-cli-xdebug
+    env_file:
+      - .env
+    environment:
+      ELASTIC_CONNECT: ${ELASTIC_CONTAINER}:9200
+    working_dir: /code
+    volumes:
+      - .:/code
+    networks: 
+      - default
+    command: bash
+
+  elastic:
+    image: elasticsearch:1.7
+    container_name: ${ELASTIC_CONTAINER}
+    environment:
+      discovery.type: single-node
+      xpack.security.enabled: "false"
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    networks: 
+      - default
+
+networks:
+  default:
+    name: ${DOCKER_DEFAULT_NETWORK}
